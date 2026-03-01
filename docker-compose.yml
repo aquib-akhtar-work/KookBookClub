@@ -1,0 +1,28 @@
+services:
+  server:
+    build:
+      context: ./server
+    image: cookbookclub-server:local
+    environment:
+      PORT: "8080"
+      DB_PATH: /data/cookbookclub.db
+      UPLOAD_DIR: /data/uploads
+      FRONTEND_ORIGIN: http://localhost:5173
+    volumes:
+      - cookbookclub-data:/data
+    ports:
+      - "8080:8080"
+
+  web:
+    build:
+      context: ./web
+      args:
+        VITE_API_BASE_URL: http://localhost:8080
+    image: cookbookclub-web:local
+    depends_on:
+      - server
+    ports:
+      - "5173:80"
+
+volumes:
+  cookbookclub-data:
