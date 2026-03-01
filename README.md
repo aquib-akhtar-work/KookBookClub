@@ -109,6 +109,8 @@ Services:
 - Frontend: `http://localhost:5173`
 - API: `http://localhost:8080`
 
+The frontend container proxies `/api/*` and `/uploads/*` to the `server` service, so Docker deployments can use same-origin API calls by default.
+
 ### Build images manually
 
 ```bash
@@ -116,10 +118,10 @@ docker build -t cookbookclub-server ./server
 docker build -t cookbookclub-web ./web
 ```
 
-Frontend Docker builds accept `VITE_API_BASE_URL` as a build arg:
+Frontend Docker builds accept `VITE_API_BASE_URL` as a build arg. If omitted, production builds use same-origin (recommended when `web` proxies to `server`).
 
 ```bash
-docker build -t cookbookclub-web --build-arg VITE_API_BASE_URL=http://localhost:8080 ./web
+docker build -t cookbookclub-web --build-arg VITE_API_BASE_URL=https://api.example.com ./web
 ```
 
 ## GitHub Actions

@@ -54,7 +54,5 @@ jobs:
             ghcr.io/${{ steps.prep.outputs.owner_lc }}/cookbookclub-web:main
             ghcr.io/${{ steps.prep.outputs.owner_lc }}/cookbookclub-web:latest
             ghcr.io/${{ steps.prep.outputs.owner_lc }}/cookbookclub-web:${{ github.sha }}
-          build-args: |
-            VITE_API_BASE_URL=http://localhost:8080
           cache-from: type=gha,scope=web
           cache-to: type=gha,mode=max,scope=web
