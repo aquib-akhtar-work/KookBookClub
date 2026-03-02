@@ -3,6 +3,7 @@ export interface User {
   email: string;
   username: string;
   display_name: string;
+  email_verified: boolean;
 }
 
 export interface Club {
@@ -20,6 +21,14 @@ export interface Member {
   display_name: string;
   role: string;
   joined_at: string;
+}
+
+export interface BannedMember {
+  id: number;
+  username: string;
+  display_name: string;
+  banned_by: string;
+  banned_at: string;
 }
 
 export interface InviteCode {

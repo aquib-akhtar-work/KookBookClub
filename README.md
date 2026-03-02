@@ -10,7 +10,11 @@ A responsive full-stack app for running cookbook clubs with invite codes, meetin
 ## Features
 
 - Account auth with email + password
+- Email verification required before creating or joining clubs
+- Forgot-password and reset-password flow via email links
+- Authenticated account page for email changes and email-code password changes
 - Unique usernames (`@username`) with optional non-unique display names
+- Club owner moderation: kick, ban, view banned members, and unban
 - Club creation and joining via invite codes
 - Membership lists with host selection from club members
 - Meeting management (address, date/time, cookbook, notes)
@@ -25,6 +29,7 @@ A responsive full-stack app for running cookbook clubs with invite codes, meetin
 ## Routing
 
 - `/auth` for login/register
+- `/account` for authenticated email/password account settings
 - `/clubs/manage` for create/join actions
 - `/clubs` for the list of clubs you are in
 - `/club/:clubId` for a specific club's meetings and activity
@@ -34,6 +39,17 @@ A responsive full-stack app for running cookbook clubs with invite codes, meetin
 - `POST /api/auth/register` creates account and returns bearer token
 - `POST /api/auth/login` logs in and returns bearer token
 - `POST /api/auth/logout` revokes current token
+- `POST /api/auth/verify-email` confirms email using token from email
+- `POST /api/auth/verify-email/resend` sends a new verification email for logged-in users
+- `POST /api/auth/password/forgot` sends a reset link if account exists
+- `POST /api/auth/password/reset` updates password using reset token
+- `POST /api/account/email` updates email (requires current password)
+- `POST /api/account/password/send-code` sends authenticated password-change code
+- `POST /api/account/password/update` updates password with authenticated email code
+- `POST /api/clubs/:id/members/:memberId/kick` removes a member (owner only)
+- `POST /api/clubs/:id/members/:memberId/ban` bans and removes a member (owner only)
+- `GET /api/clubs/:id/banned` lists banned members (owner only)
+- `POST /api/clubs/:id/banned/:userId/unban` removes ban (owner only)
 - Authenticated endpoints use `Authorization: Bearer <token>`
 
 ## Meeting lifecycle
@@ -51,6 +67,8 @@ go mod tidy
 go run .
 ```
 
+The server auto-loads `server/.env` on startup (without overriding env vars already set in your shell).
+
 Server defaults:
 
 - API: `http://localhost:8080`
@@ -67,6 +85,9 @@ Optional env vars:
 - `OPENLIBRARY_BASE_URL` (default `https://openlibrary.org`)
 - `OPENLIBRARY_CONTACT_EMAIL` (default `cookbookclub@example.com`)
 - `COOKBOOK_CACHE_TTL_HOURS` (default `72`)
+- `APP_BASE_URL` (recommended; base URL used in email links, e.g. `https://kookbook.club`)
+- `RESEND_API_KEY` (required for verification/reset emails)
+- `RESEND_FROM_EMAIL` (default `KookBook Club <no-reply@kookbook.club>`)
 
 ## Run frontend
 

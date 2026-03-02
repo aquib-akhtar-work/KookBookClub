@@ -1,4 +1,5 @@
 import type {
+  BannedMember,
   Club,
   CookbookSearchResult,
   Feedback,
@@ -127,7 +128,13 @@ export function register(payload: {
   display_name: string;
   password: string;
 }) {
-  return request<{ user: User; token: string; expires_at: string }>("/api/auth/register", {
+  return request<{
+    user: User;
+    token: string;
+    expires_at: string;
+    email_verification_required: boolean;
+    verification_email_sent: boolean;
+  }>("/api/auth/register", {
     method: "POST",
     body: JSON.stringify(payload),
     skipAuth: true
@@ -139,6 +146,60 @@ export function login(payload: { identity: string; password: string }) {
     method: "POST",
     body: JSON.stringify(payload),
     skipAuth: true
+  });
+}
+
+export function verifyEmail(payload: { token: string }) {
+  return request<{ status: string }>("/api/auth/verify-email", {
+    method: "POST",
+    body: JSON.stringify(payload),
+    skipAuth: true
+  });
+}
+
+export function resendVerificationEmail() {
+  return request<{ status: string; expires_at?: string }>("/api/auth/verify-email/resend", {
+    method: "POST"
+  });
+}
+
+export function forgotPassword(payload: { email: string }) {
+  return request<{ status: string }>("/api/auth/password/forgot", {
+    method: "POST",
+    body: JSON.stringify(payload),
+    skipAuth: true
+  });
+}
+
+export function resetPassword(payload: { token: string; password: string }) {
+  return request<{ status: string }>("/api/auth/password/reset", {
+    method: "POST",
+    body: JSON.stringify(payload),
+    skipAuth: true
+  });
+}
+
+export function updateAccountEmail(payload: { new_email: string; current_password: string }) {
+  return request<{
+    user: User;
+    email_verification_required: boolean;
+    verification_email_sent: boolean;
+  }>("/api/account/email", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function sendAccountPasswordCode() {
+  return request<{ status: string; expires_at: string }>("/api/account/password/send-code", {
+    method: "POST"
+  });
+}
+
+export function updateAccountPassword(payload: { code: string; password: string }) {
+  return request<{ status: string }>("/api/account/password/update", {
+    method: "POST",
+    body: JSON.stringify(payload)
   });
 }
 
@@ -186,6 +247,28 @@ export function joinClub(payload: { code: string }) {
 
 export function getClubMembers(clubId: number) {
   return request<{ members: Member[] }>(`/api/clubs/${clubId}/members`);
+}
+
+export function kickClubMember(clubId: number, memberId: number) {
+  return request<{ status: string }>(`/api/clubs/${clubId}/members/${memberId}/kick`, {
+    method: "POST"
+  });
+}
+
+export function banClubMember(clubId: number, memberId: number) {
+  return request<{ status: string }>(`/api/clubs/${clubId}/members/${memberId}/ban`, {
+    method: "POST"
+  });
+}
+
+export function getBannedMembers(clubId: number) {
+  return request<{ banned_members: BannedMember[] }>(`/api/clubs/${clubId}/banned`);
+}
+
+export function unbanClubMember(clubId: number, userId: number) {
+  return request<{ status: string }>(`/api/clubs/${clubId}/banned/${userId}/unban`, {
+    method: "POST"
+  });
 }
 
 export function getInviteCodes(clubId: number) {
