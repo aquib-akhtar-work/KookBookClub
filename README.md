@@ -1,4 +1,4 @@
-# Cookbook Club
+# Kookbook Club
 
 A responsive full-stack app for running cookbook clubs with invite codes, meeting planning, host assignment, recipes, media uploads, polls, and post-meeting feedback.
 
